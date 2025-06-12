@@ -17,4 +17,4 @@ RUN python -m venv /py && \
 
 ENV PATH="/py/bin:$PATH"
 
-CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:${API_PORT:-8000}"]
+CMD ["sh", "-c", "python manage.py wait_for_db && python manage.py migrate && python manage.py runserver 0.0.0.0:${API_PORT:-8000}"]
