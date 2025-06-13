@@ -1,13 +1,51 @@
-import React from "react";
+import { useEffect } from "react";
 import TaskCard from "./TaskCard";
 import { Plus, FileText } from "lucide-react";
+import { useTasksContext } from "../context/task-context";
+import useTaskActions from "../hooks/useTaskActions";
+import { useModalContext } from "../context/modal-context";
+import toast from "react-hot-toast";
 
-const TaskList = ({
-  tasks,
-  handleEditTask,
-  handleDeleteTask,
-  setShowCreateModal,
-}) => {
+const TaskList = () => {
+  const { tasks, setTasks, setNewTask } = useTasksContext();
+  const { getTasks, deleteTask } = useTaskActions();
+  const { setIsModalOpen } = useModalContext();
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data = await getTasks();
+        setTasks(
+          data.map((t) => ({
+            ...t,
+            effort: t.effort_days,
+            dueDate: t.due_date,
+          }))
+        );
+      } catch (err) {
+        console.error("Failed to fetch tasks:", err);
+        setTasks([]);
+      }
+    };
+    fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const handleEditTask = (task) => {
+    setNewTask(task);
+    setIsModalOpen("edit");
+  };
+
+  const handleDeleteTask = async (id) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        await deleteTask(id);
+        setTasks((prev) => prev.filter((task) => task.id !== id));
+        toast.success("Task deleted successfully!");
+      } catch (err) {
+        console.error("Failed to delete task:", err);
+        toast.error("Failed to delete task.");
+      }
+    }
+  };
   if (tasks.length === 0) {
     return (
       <div className="text-center py-12">
@@ -19,8 +57,8 @@ const TaskList = ({
           Create your first task to get started
         </p>
         <button
-          onClick={() => setShowCreateModal(true)}
-          className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors mx-auto"
+          onClick={() => setIsModalOpen("create")}
+          className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors mx-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Create Task</span>

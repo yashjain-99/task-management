@@ -184,7 +184,7 @@ const Auth = ({ isSignUp }) => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
@@ -230,7 +230,7 @@ const Auth = ({ isSignUp }) => {
               : "Don't have an account?"}
             <button
               onClick={() => setShouldShowSignUp(!shouldShowSignUp)}
-              className="text-indigo-600 hover:text-indigo-700 font-medium ml-1"
+              className="text-indigo-600 hover:text-indigo-700 font-medium ml-1 cursor-pointer"
             >
               {shouldShowSignUp ? "Sign In" : "Sign Up"}
             </button>

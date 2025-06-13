@@ -4,11 +4,16 @@ import useTaskActions from "../hooks/useTaskActions";
 import { toast } from "react-hot-toast";
 import { useAuthContext } from "../context/auth-context";
 import axios from "../api/axios";
+import { useTasksContext } from "../context/task-context";
+import { useModalContext } from "../context/modal-context";
 
-const Header = ({ tasksCount, setShowCreateModal }) => {
+const Header = () => {
   const { exportTasks, bulkUploadTasks } = useTaskActions();
+  const { tasks } = useTasksContext();
+  const tasksCount = tasks.length || 0; // Ensure tasksCount is defined
   const fileInputRef = useRef(null);
   const { setAuth } = useAuthContext();
+  const { setIsModalOpen } = useModalContext();
 
   const handleLogout = async () => {
     try {
@@ -35,6 +40,7 @@ const Header = ({ tasksCount, setShowCreateModal }) => {
       window.URL.revokeObjectURL(url);
       toast.success("Tasks exported successfully!");
     } catch (err) {
+      console.error("Export failed:", err);
       toast.error("Failed to export tasks.");
     }
   };
@@ -51,6 +57,7 @@ const Header = ({ tasksCount, setShowCreateModal }) => {
       toast.success("Tasks uploaded successfully!");
       window.location.reload();
     } catch (err) {
+      console.error("Bulk upload failed:", err);
       toast.error("Failed to upload tasks. Please check your file format.");
     } finally {
       e.target.value = "";
@@ -73,14 +80,14 @@ const Header = ({ tasksCount, setShowCreateModal }) => {
           <div className="flex items-center space-x-3">
             <button
               onClick={handleExportTasks}
-              className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>Export to Excel</span>
             </button>
             <button
               onClick={handleBulkUploadClick}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
               type="button"
             >
               <Upload className="w-4 h-4" />
@@ -94,15 +101,15 @@ const Header = ({ tasksCount, setShowCreateModal }) => {
               className="hidden"
             />
             <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              onClick={() => setIsModalOpen("create")}
+              className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>New Task</span>
             </button>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
             >
               Sign Out
             </button>

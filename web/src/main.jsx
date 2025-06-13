@@ -8,6 +8,8 @@ import toast, { Toaster } from "react-hot-toast";
 import validateSession from "./hooks/useValidateSession";
 import { AuthProvider, useAuthContext } from "./context/auth-context";
 import TaskManagementApp from "./routes/dashboard";
+import { TasksProvider } from "./context/task-context";
+import { ModalProvider } from "./context/modal-context";
 
 const rootElement = createRoot(document.getElementById("root"));
 
@@ -48,7 +50,11 @@ const App = () => {
               path="/"
               element={
                 <ProtectedRoutes>
-                  <TaskManagementApp />
+                  <TasksProvider>
+                    <ModalProvider>
+                      <TaskManagementApp />
+                    </ModalProvider>
+                  </TasksProvider>
                 </ProtectedRoutes>
               }
             />
@@ -58,7 +64,7 @@ const App = () => {
           </Routes>
         </AuthProvider>
       </BrowserRouter>
-      <Toaster position="top-left" />
+      <Toaster position="bottom-right" />
     </>
   );
 };

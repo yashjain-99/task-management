@@ -14,13 +14,13 @@ const TaskCard = ({ task, handleEditTask, handleDeleteTask }) => {
         <div className="flex items-center space-x-1 ml-2">
           <button
             onClick={() => handleEditTask(task)}
-            className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
           >
             <Edit3 className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleDeleteTask(task.id)}
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
           </button>
