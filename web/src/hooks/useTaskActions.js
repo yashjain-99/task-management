@@ -27,7 +27,15 @@ const useTaskActions = () => {
     return response.data;
   };
 
-  return { createTask, updateTask, deleteTask, getTasks };
+  // Export tasks as Excel
+  const exportTasks = async () => {
+    const response = await axiosPrivate.get("/task/export/", {
+      responseType: "blob",
+    });
+    return response.data;
+  };
+
+  return { createTask, updateTask, deleteTask, getTasks, exportTasks };
 };
 
 export default useTaskActions;
