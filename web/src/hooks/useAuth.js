@@ -14,7 +14,9 @@ const useAuth = (body, isFromRegister) => {
       try {
         if (body && body?.username && body?.password) {
           setLoading(true);
-          const response = await axios.post(url, JSON.stringify(body));
+          const response = await axios.post(url, JSON.stringify(body), {
+            withCredentials: true,
+          });
 
           if (response.status !== 200) {
             const errorData = response.data;
