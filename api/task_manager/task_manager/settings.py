@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -144,7 +145,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     'REFRESH_TOKEN_COOKIE_NAME': 'refresh',
-    'REFRESH_TOKEN_COOKIE_PATH': '/api/refresh/',
+    'REFRESH_TOKEN_COOKIE_PATH': '/',
     'COOKIE_SECURE': False,
     'COOKIE_SAMESITE': 'Lax',
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173'
+]
+CORS_ALLOW_CREDENTIALS = True

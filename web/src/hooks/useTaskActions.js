@@ -1,0 +1,33 @@
+import useAxiosPrivate from "./useAxiosPrivate";
+
+const useTaskActions = () => {
+  const axiosPrivate = useAxiosPrivate();
+
+  // Create a new task
+  const createTask = async (taskData) => {
+    const response = await axiosPrivate.post("/task/tasks/", taskData);
+    return response.data;
+  };
+
+  // Update an existing task by id
+  const updateTask = async (id, taskData) => {
+    const response = await axiosPrivate.put(`/task/tasks/${id}/`, taskData);
+    return response.data;
+  };
+
+  // Delete a task by id
+  const deleteTask = async (id) => {
+    await axiosPrivate.delete(`/task/tasks/${id}/`);
+    return true;
+  };
+
+  // Get list of tasks
+  const getTasks = async () => {
+    const response = await axiosPrivate.get("/task/tasks/");
+    return response.data;
+  };
+
+  return { createTask, updateTask, deleteTask, getTasks };
+};
+
+export default useTaskActions;
