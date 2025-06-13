@@ -1,9 +1,10 @@
-import React from "react";
-import { Plus, FileText, Download } from "lucide-react";
+import React, { useRef } from "react";
+import { Plus, FileText, Download, Upload } from "lucide-react";
 import useTaskActions from "../hooks/useTaskActions";
 
 const Header = ({ tasksCount, setShowCreateModal, handleLogout }) => {
-  const { exportTasks } = useTaskActions();
+  const { exportTasks, bulkUploadTasks } = useTaskActions();
+  const fileInputRef = useRef(null);
 
   const handleExportTasks = async () => {
     try {
@@ -18,6 +19,24 @@ const Header = ({ tasksCount, setShowCreateModal, handleLogout }) => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       alert("Failed to export tasks.");
+    }
+  };
+
+  const handleBulkUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleBulkUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      await bulkUploadTasks(file);
+      alert("Tasks uploaded successfully!");
+      // Optionally: trigger a refresh of tasks in parent via a callback prop
+    } catch (err) {
+      alert("Failed to upload tasks. Please check your file format.");
+    } finally {
+      e.target.value = ""; // Reset input so same file can be selected again
     }
   };
 
@@ -42,6 +61,21 @@ const Header = ({ tasksCount, setShowCreateModal, handleLogout }) => {
               <Download className="w-4 h-4" />
               <span>Export to Excel</span>
             </button>
+            <button
+              onClick={handleBulkUploadClick}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              type="button"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Bulk Upload</span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleBulkUpload}
+              className="hidden"
+            />
             <button
               onClick={() => setShowCreateModal(true)}
               className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"

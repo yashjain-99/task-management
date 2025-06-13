@@ -35,7 +35,24 @@ const useTaskActions = () => {
     return response.data;
   };
 
-  return { createTask, updateTask, deleteTask, getTasks, exportTasks };
+  // Bulk upload tasks from file
+  const bulkUploadTasks = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosPrivate.post("/task/bulk_upload/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  };
+
+  return {
+    createTask,
+    updateTask,
+    deleteTask,
+    getTasks,
+    exportTasks,
+    bulkUploadTasks,
+  };
 };
 
 export default useTaskActions;
