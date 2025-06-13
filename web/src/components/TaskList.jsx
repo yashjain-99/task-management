@@ -6,8 +6,6 @@ const TaskList = ({
   tasks,
   handleEditTask,
   handleDeleteTask,
-  getDaysUntilDue,
-  getTaskStatusColor,
   setShowCreateModal,
 }) => {
   if (tasks.length === 0) {
@@ -38,8 +36,6 @@ const TaskList = ({
           task={task}
           handleEditTask={handleEditTask}
           handleDeleteTask={handleDeleteTask}
-          getDaysUntilDue={getDaysUntilDue}
-          getTaskStatusColor={getTaskStatusColor}
         />
       ))}
     </div>

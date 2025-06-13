@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileText, User, Lock, Eye, EyeOff } from "lucide-react";
 import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 // Loader component
 const Loader = () => (
@@ -58,7 +59,7 @@ const Auth = ({ isSignUp }) => {
   const handleSignUp = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
     setSubmitType("signup");
@@ -67,6 +68,7 @@ const Auth = ({ isSignUp }) => {
       password,
       email,
       fullName,
+      password2: confirmPassword,
     });
   };
 

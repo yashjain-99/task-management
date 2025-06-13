@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import useTaskActions from "../hooks/useTaskActions";
-import axios from "../api/axios";
-import { useAuthContext } from "../context/auth-context";
 import Header from "../components/Header";
 import TaskList from "../components/TaskList";
 import TaskModal from "../components/TaskModal";
+import { toast } from "react-hot-toast";
 
 const TaskManagementApp = () => {
   const [tasks, setTasks] = useState([]);
@@ -16,11 +15,8 @@ const TaskManagementApp = () => {
     effort: "",
     dueDate: "",
   });
-  const fileInputRef = useRef(null);
   const { getTasks, createTask, updateTask, deleteTask } = useTaskActions();
-  const { setAuth } = useAuthContext();
 
-  // Fetch tasks on mount (replace with real API call if available)
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -43,7 +39,7 @@ const TaskManagementApp = () => {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     if (!newTask.title.trim() || !newTask.effort || !newTask.dueDate) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
     try {
@@ -66,6 +62,7 @@ const TaskManagementApp = () => {
               : t
           )
         );
+        toast.success("Task updated successfully!");
       } else {
         const created = await createTask({
           title: newTask.title,
@@ -81,6 +78,7 @@ const TaskManagementApp = () => {
             dueDate: created.due_date,
           },
         ]);
+        toast.success("Task created successfully!");
       }
       setShowCreateModal(false);
       setEditingTask(null);
@@ -91,7 +89,7 @@ const TaskManagementApp = () => {
         dueDate: "",
       });
     } catch (err) {
-      alert("Failed to save task.");
+      toast.error("Failed to save task.");
     }
   };
 
@@ -111,34 +109,11 @@ const TaskManagementApp = () => {
       try {
         await deleteTask(id);
         setTasks((prev) => prev.filter((task) => task.id !== id));
+        toast.success("Task deleted successfully!");
       } catch (err) {
-        alert("Failed to delete task.");
+        toast.error("Failed to delete task.");
       }
     }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axios.post("/auth/logout/", {}, { withCredentials: true });
-      setAuth({});
-    } catch (err) {
-      setAuth({});
-    }
-  };
-
-  const getDaysUntilDue = (dueDate) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const getTaskStatusColor = (dueDate) => {
-    const daysUntil = getDaysUntilDue(dueDate);
-    if (daysUntil < 0) return "text-red-600 bg-red-50";
-    if (daysUntil <= 2) return "text-orange-600 bg-orange-50";
-    return "text-green-600 bg-green-50";
   };
 
   return (
@@ -146,7 +121,6 @@ const TaskManagementApp = () => {
       <Header
         tasksCount={tasks.length}
         setShowCreateModal={setShowCreateModal}
-        handleLogout={handleLogout}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -154,8 +128,6 @@ const TaskManagementApp = () => {
           tasks={tasks}
           handleEditTask={handleEditTask}
           handleDeleteTask={handleDeleteTask}
-          getDaysUntilDue={getDaysUntilDue}
-          getTaskStatusColor={getTaskStatusColor}
           setShowCreateModal={setShowCreateModal}
         />
       </div>
@@ -170,17 +142,6 @@ const TaskManagementApp = () => {
           handleCreateTask={handleCreateTask}
         />
       )}
-
-      {/* Hidden file input for CSV upload */}
-      {/* 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".csv"
-        onChange={handleFileUpload}
-        className="hidden"
-      />
-      */}
     </div>
   );
 };

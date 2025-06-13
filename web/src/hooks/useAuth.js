@@ -18,7 +18,7 @@ const useAuth = (body, isFromRegister) => {
             withCredentials: true,
           });
 
-          if (response.status !== 200) {
+          if (!response) {
             const errorData = response.data;
             throw new Error(errorData.error);
           }
@@ -26,7 +26,6 @@ const useAuth = (body, isFromRegister) => {
           const resData = response.data;
 
           if (!isFromRegister) {
-            console.log(resData.access);
             setAuth({ accessToken: resData.access });
           }
 
@@ -41,7 +40,6 @@ const useAuth = (body, isFromRegister) => {
           setLoading(false);
         }
       } catch (error) {
-        console.error(error);
         setError(error?.response?.data?.error || "An error occurred.");
         setLoading(false);
       }

@@ -1,10 +1,26 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { Plus, FileText, Download, Upload } from "lucide-react";
 import useTaskActions from "../hooks/useTaskActions";
+import { toast } from "react-hot-toast";
+import { useAuthContext } from "../context/auth-context";
+import axios from "../api/axios";
 
-const Header = ({ tasksCount, setShowCreateModal, handleLogout }) => {
+const Header = ({ tasksCount, setShowCreateModal }) => {
   const { exportTasks, bulkUploadTasks } = useTaskActions();
   const fileInputRef = useRef(null);
+  const { setAuth } = useAuthContext();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/auth/logout/", {}, { withCredentials: true });
+      setAuth({});
+    } catch (err) {
+      console.error("Logout failed:", err);
+      setAuth({});
+    } finally {
+      window.location.href = "/login";
+    }
+  };
 
   const handleExportTasks = async () => {
     try {
@@ -17,8 +33,9 @@ const Header = ({ tasksCount, setShowCreateModal, handleLogout }) => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      toast.success("Tasks exported successfully!");
     } catch (err) {
-      alert("Failed to export tasks.");
+      toast.error("Failed to export tasks.");
     }
   };
 
@@ -31,12 +48,12 @@ const Header = ({ tasksCount, setShowCreateModal, handleLogout }) => {
     if (!file) return;
     try {
       await bulkUploadTasks(file);
-      alert("Tasks uploaded successfully!");
-      // Optionally: trigger a refresh of tasks in parent via a callback prop
+      toast.success("Tasks uploaded successfully!");
+      window.location.reload();
     } catch (err) {
-      alert("Failed to upload tasks. Please check your file format.");
+      toast.error("Failed to upload tasks. Please check your file format.");
     } finally {
-      e.target.value = ""; // Reset input so same file can be selected again
+      e.target.value = "";
     }
   };
 

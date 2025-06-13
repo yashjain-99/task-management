@@ -1,13 +1,7 @@
-import React from "react";
 import { Edit3, Trash2, Calendar, Clock } from "lucide-react";
+import { getDaysUntilDue, getTaskStatusColor } from "../utils/task-utils";
 
-const TaskCard = ({
-  task,
-  handleEditTask,
-  handleDeleteTask,
-  getDaysUntilDue,
-  getTaskStatusColor,
-}) => {
+const TaskCard = ({ task, handleEditTask, handleDeleteTask }) => {
   const daysUntil = getDaysUntilDue(task.dueDate);
   const statusColor = getTaskStatusColor(task.dueDate);
 

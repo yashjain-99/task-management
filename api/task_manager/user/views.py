@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from datetime import datetime, timedelta
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -71,12 +72,23 @@ class UserLogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
+        refresh_token = request.COOKIES.get(
+            settings.SIMPLE_JWT['REFRESH_TOKEN_COOKIE_NAME']
+        )
         response = Response({'detail': 'Successfully logged out'})
 
         response.delete_cookie(
             key=settings.SIMPLE_JWT['REFRESH_TOKEN_COOKIE_NAME'],
             path=settings.SIMPLE_JWT['REFRESH_TOKEN_COOKIE_PATH']
         )
-        
-        return response
 
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                print("Token blacklisted successfully.")
+            except Exception:
+                print("Error blacklisting token, it may be invalid or blacklisting is not enabled.")
+                pass  # Ignore errors if token is invalid or blacklisting is not enabled
+
+        return response
